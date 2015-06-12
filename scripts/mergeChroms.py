@@ -145,15 +145,20 @@ def main():
     startTime = time.time()
     
     # create the usage statement
-    usage = "usage: python %prog id inputDir outputDir [Options]"
+    usage = """usage: python %prog id inputDir outputDir [Options]
+
+Program looks for files named id_chr<N>.vcf(.gz) in inputDir and merges them
+into a single outputfile in outputDir. 
+Using the same inputDir and outputDir is allowed."""
     i_cmdLineParser = OptionParser(usage=usage)
     
+    i_cmdLineParser.add_option("-o", "--outputFilename", dest="outputFilename", metavar="OUTPUT_FILE", help="the name of the output file, <id>.vcf(.gz) by default")
     i_cmdLineParser.add_option("-l", "--log", dest="logLevel", default="WARNING", metavar="LOG", help="the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL), %default by default")
     i_cmdLineParser.add_option("-g", "--logFilename", dest="logFilename", metavar="LOG_FILE", help="the name of the log file, STDOUT by default")
     i_cmdLineParser.add_option("", "--gzip", action="store_true", default=False, dest="gzip", help="include this argument if the final VCF should be compressed with gzip")
     
     # range(inclusiveFrom, exclusiveTo, by)
-    i_possibleArgLengths = range(3,10,1)
+    i_possibleArgLengths = range(3,12,1)
     i_argLength = len(sys.argv)
     
     # check if this is one of the possible correct commands
@@ -168,6 +173,7 @@ def main():
     i_outputDir = i_cmdLineArgs[2]
     
     # get the optional params with default values
+    i_outputFilename = i_cmdLineOptions.outputFilename
     i_logLevel = i_cmdLineOptions.logLevel
     i_gzip = i_cmdLineOptions.gzip
     
@@ -213,11 +219,22 @@ def main():
                 
     # get the VCF generator
     (headerDict, coordinateDict) = get_vcf_data(i_id, i_inputDir, i_debug)    
-    
-    if (i_gzip):        
-        i_outputFilename = os.path.join(i_outputDir, i_id + ".vcf.gz")
+    if len(headerDict['info']) == 0:
+	print >> sys.stderr, "\nERROR: No VCF files matching %s_chr<N>.vcf or %s_chr<N>.vcf.gz were found\n" % (i_id, i_id)
+	sys.exit(1)
+
+    # create output filename, clean if necessary
+    if i_outputFilename:
+        if i_outputFilename.endswith('.gz'):
+            i_outputFilename = i_outputFilename[:-3]
+        if i_outputFilename.endswith('.vcf'):
+            i_outputFilename = i_outputFilename[:-4]
     else:
-        i_outputFilename = os.path.join(i_outputDir, i_id + ".vcf")
+	i_outputFilename = i_id
+    if (i_gzip):
+        i_outputFilename = os.path.join(i_outputDir, i_outputFilename + ".vcf.gz")
+    else:
+        i_outputFilename = os.path.join(i_outputDir, i_outputFilename + ".vcf")
     
     outputFileHandler = get_write_fileHandler(i_outputFilename)
     
