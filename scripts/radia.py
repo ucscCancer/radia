@@ -1133,7 +1133,6 @@ def main():
     
     # params for normal DNA
     i_cmdLineParser.add_option("-n", "--dnaNormalFilename", dest="dnaNormalFilename", metavar="DNA_NORMAL_FILE", help="the name of the normal DNA .bam file")
-    i_cmdLineParser.add_option("--np", "--dnaNormalPileupsFilename", dest="dnaNormalPileupsFilename", metavar="DNA_NORMAL_PILEUPS", help="the name of the normal DNA mpileup file")
     i_cmdLineParser.add_option("", "--dnaNormalMinTotalBases", type="int", default=int(4), dest="dnaNormalMinTotalNumBases", metavar="DNA_NOR_MIN_TOTAL_BASES", help="the minimum number of overall normal DNA reads covering a position, %default by default")
     i_cmdLineParser.add_option("", "--dnaNormalMinAltBases", type="int", default=int(2), dest="dnaNormalMinAltNumBases", metavar="DNA_NOR_MIN_ALT_BASES", help="the minimum number of alternative normal DNA reads supporting a variant at a position, %default by default")
     i_cmdLineParser.add_option("", "--dnaNormalBaseQual", type="int", default=int(10), dest="dnaNormalMinBaseQuality", metavar="DNA_NOR_BASE_QUAL", help="the minimum normal DNA base quality, %default by default")
@@ -1146,7 +1145,6 @@ def main():
     
     # params for normal RNA
     i_cmdLineParser.add_option("-x", "--rnaNormalFilename", dest="rnaNormalFilename", metavar="RNA_NORMAL_FILE", help="the name of the normal RNA-Seq .bam file")
-    i_cmdLineParser.add_option("--xp", "--rnaNormalPileupsFilename", dest="rnaNormalPileupsFilename", metavar="RNA_NORMAL_PILEUPS", help="the name of the normal RNA-Seq mpileup file")
     i_cmdLineParser.add_option("", "--rnaNormalMinTotalBases", type="int", default=int(4), dest="rnaNormalMinTotalNumBases", metavar="RNA_NOR_MIN_TOTAL_BASES", help="the minimum number of overall normal RNA-Seq reads covering a position, %default by default")
     i_cmdLineParser.add_option("", "--rnaNormalMinAltBases", type="int", default=int(2), dest="rnaNormalMinAltNumBases", metavar="RNA_NOR_MIN_ALT_BASES", help="the minimum number of alternative normal RNA-Seq reads supporting a variant at a position, %default by default")
     i_cmdLineParser.add_option("", "--rnaNormalBaseQual", type="int", default=int(10), dest="rnaNormalMinBaseQuality", metavar="RNA_NOR_BASE_QUAL", help="the minimum normal RNA-Seq base quality, %default by default")
@@ -1159,7 +1157,6 @@ def main():
     
     # params for tumor DNA
     i_cmdLineParser.add_option("-t", "--dnaTumorFilename", dest="dnaTumorFilename", metavar="DNA_TUMOR_FILE", help="the name of the tumor DNA .bam file")
-    i_cmdLineParser.add_option("--tp", "--dnaTumorPileupsFilename", dest="dnaTumorPileupsFilename", metavar="DNA_TUMOR_PILEUPS", help="the name of the tumor DNA mpileup file")
     i_cmdLineParser.add_option("", "--dnaTumorMinTotalBases", type="int", default=int(4), dest="dnaTumorMinTotalNumBases", metavar="DNA_TUM_MIN_TOTAL_BASES", help="the minimum number of overall tumor DNA reads covering a position, %default by default")
     i_cmdLineParser.add_option("", "--dnaTumorMinAltBases", type="int", default=int(2), dest="dnaTumorMinAltNumBases", metavar="DNA_TUM_MIN_ALT_BASES", help="the minimum number of alternative tumor DNA reads supporting a variant at a position, %default by default")
     i_cmdLineParser.add_option("", "--dnaTumorBaseQual", type="int", default=int(10), dest="dnaTumorMinBaseQuality", metavar="DNA_TUM_BASE_QUAL", help="the minimum tumor DNA base quality, %default by default")
@@ -1172,7 +1169,6 @@ def main():
     
     # params for tumor RNA
     i_cmdLineParser.add_option("-r", "--rnaTumorFilename", dest="rnaTumorFilename", metavar="RNA_TUMOR_FILE", help="the name of the tumor RNA-Seq .bam file")
-    i_cmdLineParser.add_option("--rp", "--rnaTumorPileupsFilename", dest="rnaTumorPileupsFilename", metavar="RNA_TUMOR_PILEUPS", help="the name of the tumor RNA-Seq mpileup file")
     i_cmdLineParser.add_option("", "--rnaTumorMinTotalBases", type="int", default=int(4), dest="rnaTumorMinTotalNumBases", metavar="RNA_TUM_MIN_TOTAL_BASES", help="the minimum number of overall tumor RNA-Seq reads covering a position, %default by default")
     i_cmdLineParser.add_option("", "--rnaTumorMinAltBases", type="int", default=int(2), dest="rnaTumorMinAltNumBases", metavar="RNA_TUM_MIN_ALT_BASES", help="the minimum number of alternative tumor RNA-Seq reads supporting a variant at a position, %default by default")
     i_cmdLineParser.add_option("", "--rnaTumorBaseQual", type="int", default=int(10), dest="rnaTumorMinBaseQuality", metavar="RNA_TUM_BASE_QUAL", help="the minimum tumor RNA-Seq base quality, %default by default")
@@ -1270,16 +1266,12 @@ def main():
     i_outputFilename = None
     i_logFilename = None
     i_dnaNormalFilename = None
-    i_dnaNormalPileupsFilename = None
     i_dnaNormalGenerator = None
     i_dnaTumorFilename = None
-    i_dnaTumorPileupsFilename = None
     i_dnaTumorGenerator = None
     i_rnaNormalFilename = None
-    i_rnaNormalPileupsFilename = None
     i_rnaNormalGenerator = None
     i_rnaTumorFilename = None
-    i_rnaTumorPileupsFilename = None
     i_rnaTumorGenerator = None
     i_dnaNormalFastaFilename = None
     i_dnaTumorFastaFilename = None
@@ -1293,19 +1285,6 @@ def main():
     i_sequencingPlatform = None
     i_disease = None
     
-    if (i_cmdLineOptions.dnaNormalPileupsFilename != None):
-        i_dnaNormalPileupsFilename = str(i_cmdLineOptions.dnaNormalPileupsFilename)
-        i_readFilenameList += [i_dnaNormalPileupsFilename]   
-    if (i_cmdLineOptions.rnaNormalPileupsFilename != None):
-        i_rnaNormalPileupsFilename = str(i_cmdLineOptions.rnaNormalPileupsFilename)
-        i_readFilenameList += [i_rnaNormalPileupsFilename] 
-    if (i_cmdLineOptions.dnaTumorPileupsFilename != None):
-        i_dnaTumorPileupsFilename = str(i_cmdLineOptions.dnaTumorPileupsFilename)
-        i_readFilenameList += [i_dnaTumorPileupsFilename] 
-    if (i_cmdLineOptions.rnaTumorPileupsFilename != None):
-        i_rnaTumorPileupsFilename = str(i_cmdLineOptions.rnaTumorPileupsFilename)
-        i_readFilenameList += [i_rnaTumorPileupsFilename]
-        
     if (i_cmdLineOptions.dnaNormalFilename != None):
         i_dnaNormalFilename = str(i_cmdLineOptions.dnaNormalFilename)
         i_readFilenameList += [i_dnaNormalFilename]   
@@ -1428,8 +1407,6 @@ def main():
         
         if (i_dnaNormalFilename != None):
             logging.debug("dnaNormal=%s" % i_dnaNormalFilename)
-        if (i_dnaNormalPileupsFilename != None):
-            logging.debug("dnaNormal=%s" % i_dnaNormalPileupsFilename)
         logging.debug("dna normal fasta File: %s" % i_dnaNormalFastaFilename)
         logging.debug("dna normal baseQual: %s" % i_dnaNormBaseQual)
         logging.debug("dna normal mappingQual: %s" % i_dnaNormMapQual)
@@ -1440,8 +1417,6 @@ def main():
     
         if (i_dnaTumorFilename != None):
             logging.debug("dnaTumor=%s" % i_dnaTumorFilename)
-        if (i_dnaTumorPileupsFilename != None):
-            logging.debug("dnaTumor=%s" % i_dnaTumorPileupsFilename)
         logging.debug("dna tumor fasta File: %s" % i_dnaTumorFastaFilename)
         logging.debug("dna tumor baseQual: %s" % i_dnaTumBaseQual)
         logging.debug("dna tumor mappingQual: %s" % i_dnaTumMapQual)
@@ -1452,8 +1427,6 @@ def main():
         
         if (i_rnaNormalFilename != None):
             logging.debug("rnaNormal=%s" % i_rnaNormalFilename)
-        if (i_rnaNormalPileupsFilename != None):
-            logging.debug("rnaNormal=%s" % i_rnaNormalPileupsFilename)
         logging.debug("rna normal fasta File: %s" % i_rnaNormalFastaFilename)
         logging.debug("rna normal baseQual: %s" % i_rnaNormBaseQual)
         logging.debug("rna normal mappingQual: %s" % i_rnaNormMapQual)
@@ -1464,8 +1437,6 @@ def main():
         
         if (i_rnaTumorFilename != None):
             logging.debug("rnaTumor=%s" % i_rnaTumorFilename)
-        if (i_rnaTumorPileupsFilename != None):
-            logging.debug("rnaTumor=%s" % i_rnaTumorPileupsFilename)
         logging.debug("rna tumor fasta File: %s" % i_rnaTumorFastaFilename)
         logging.debug("rna tumor baseQual: %s" % i_rnaTumBaseQual)
         logging.debug("rna tumor mappingQual: %s" % i_rnaTumMapQual)
@@ -1479,21 +1450,8 @@ def main():
         sys.exit(1)
         
     # the user must specify at least one .bam file
-    if (i_dnaNormalFilename == None and i_dnaTumorFilename == None and i_rnaNormalFilename == None and i_rnaTumorFilename == None and
-        i_dnaNormalPileupsFilename == None and i_dnaTumorPileupsFilename == None and i_rnaNormalPileupsFilename == None and i_rnaTumorPileupsFilename == None):
+    if (i_dnaNormalFilename == None and i_dnaTumorFilename == None and i_rnaNormalFilename == None and i_rnaTumorFilename == None):
         logging.critical("You must specify at least one .bam file.")
-        sys.exit(1)
-    if (i_dnaNormalFilename == None and i_dnaNormalPileupsFilename != None):
-        logging.critical("You have specified a pileups file for the DNA normal sample, but the original .bam file is needed for filtering. Please specify both a .bam and a pileups file for the DNA normal sample.")
-        sys.exit(1)
-    if (i_rnaNormalFilename == None and i_rnaNormalPileupsFilename != None):
-        logging.critical("You have specified a pileups file for the RNA normal sample, but the original .bam file is needed for filtering. Please specify both a .bam and a pileups file for the RNA normal sample.")
-        sys.exit(1)
-    if (i_dnaTumorFilename == None and i_dnaTumorPileupsFilename != None):
-        logging.critical("You have specified a pileups file for the DNA tumor sample, but the original .bam file is needed for filtering. Please specify both a .bam and a pileups file for the DNA tumor sample.")
-        sys.exit(1)       
-    if (i_rnaTumorFilename == None and i_rnaTumorPileupsFilename != None):
-        logging.critical("You have specified a pileups file for the RNA tumor sample, but the original .bam file is needed for filtering. Please specify both a .bam and a pileups file for the RNA tumor sample.")
         sys.exit(1)
     if (i_dnaNormalFilename != None and not os.path.isfile(i_dnaNormalFilename + ".bai")):
         logging.critical("The index file for the BAM file " + i_dnaNormalFilename + " doesn't exist.  Please use the 'samtools index' command to create one.")
@@ -1560,31 +1518,19 @@ def main():
         logging.debug("original i_batchSize: %s" % i_batchSize)
             
     # get the generators that will yield the pileups
-    # Note:  Use the "get_sam_data" when testing locally on a .sam file or using the pileups files
+    # Note:  Use the "get_sam_data" when testing locally on a .sam file 
     #        Use the "get_bam_data" when running on real .bam file data
-    if ((i_dnaNormalFilename != None and i_dnaNormalFilename.endswith(".sam")) or (i_dnaNormalPileupsFilename != None)):
-        if (i_dnaNormalFilename != None):
-            i_dnaNormalGenerator = get_sam_data(i_dnaNormalFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_dnaNormLabel, i_debug)
-        else:
-            i_dnaNormalGenerator = get_sam_data(i_dnaNormalPileupsFilename, i_chrom, i_startCoordinate, i_stopCoordinate,i_dnaNormLabel, i_debug)
+    if ((i_dnaNormalFilename != None and i_dnaNormalFilename.endswith(".sam"))) :
+        i_dnaNormalGenerator = get_sam_data(i_dnaNormalFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_dnaNormLabel, i_debug)
         
-    if ((i_dnaTumorFilename != None and i_dnaTumorFilename.endswith(".sam")) or (i_dnaTumorPileupsFilename != None)):
-        if (i_dnaTumorFilename != None):
-            i_dnaTumorGenerator = get_sam_data(i_dnaTumorFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_dnaTumLabel, i_debug)
-        else:
-            i_dnaTumorGenerator = get_sam_data(i_dnaTumorPileupsFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_dnaTumLabel, i_debug)
+    if ((i_dnaTumorFilename != None and i_dnaTumorFilename.endswith(".sam"))):
+        i_dnaTumorGenerator = get_sam_data(i_dnaTumorFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_dnaTumLabel, i_debug)
         
-    if ((i_rnaNormalFilename != None and i_rnaNormalFilename.endswith(".sam")) or (i_rnaNormalPileupsFilename != None)):
-        if (i_rnaNormalFilename != None):
-            i_rnaNormalGenerator = get_sam_data(i_rnaNormalFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_rnaNormLabel, i_debug)
-        else:
-            i_rnaNormalGenerator = get_sam_data(i_rnaNormalPileupsFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_rnaNormLabel, i_debug)
+    if ((i_rnaNormalFilename != None and i_rnaNormalFilename.endswith(".sam"))):
+        i_rnaNormalGenerator = get_sam_data(i_rnaNormalFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_rnaNormLabel, i_debug)
     
-    if ((i_rnaTumorFilename != None and i_rnaTumorFilename.endswith(".sam")) or (i_rnaTumorPileupsFilename != None)):
-        if (i_rnaTumorFilename != None):
-            i_rnaTumorGenerator = get_sam_data(i_rnaTumorFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_rnaTumLabel, i_debug)
-        else:
-            i_rnaTumorGenerator = get_sam_data(i_rnaTumorPileupsFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_rnaTumLabel, i_debug)
+    if ((i_rnaTumorFilename != None and i_rnaTumorFilename.endswith(".sam"))):
+        i_rnaTumorGenerator = get_sam_data(i_rnaTumorFilename, i_chrom, i_startCoordinate, i_stopCoordinate, i_rnaTumLabel, i_debug)
                      
                     
     if (i_dnaNormalFilename != None):
@@ -1810,7 +1756,7 @@ def main():
             
             # if either a normal or tumor file is specified, we will label them as edits
             # if neither a normal file nor a tumor file is specified, we will label them as variants
-            if (i_dnaNormalFilename == None and i_dnaTumorFilename == None and i_dnaNormalPileupsFilename == None and i_dnaTumorPileupsFilename == None):
+            if (i_dnaNormalFilename == None and i_dnaTumorFilename == None):
                 gainModType = "RNA_NOR_VAR"
             else:
                 gainModType = "NOR_EDIT"    
@@ -1839,7 +1785,7 @@ def main():
                 
             # if a normal file is specified, we will label them as somatic mutations
             # otherwise, we will just call them variants
-            if (i_dnaNormalFilename != None or i_dnaNormalPileupsFilename != None):
+            if (i_dnaNormalFilename != None):
                 gainModType = "SOM"
             else:
                 gainModType = "DNA_TUM_VAR"
@@ -1865,7 +1811,7 @@ def main():
             
             # if either a normal or tumor file is specified, we will label them as edits
             # if neither a normal file nor a tumor file is specified, we will label them as variants
-            if (i_dnaNormalFilename == None and i_dnaTumorFilename == None and i_dnaNormalPileupsFilename == None and i_dnaTumorPileupsFilename == None):
+            if (i_dnaNormalFilename == None and i_dnaTumorFilename == None):
                 gainModType = "RNA_TUM_VAR"
             else:
                 gainModType = "TUM_EDIT"
@@ -1970,16 +1916,16 @@ def main():
                 vcfOutputList.append(formatString)
                 
                 # add the sample specific data
-                if (i_dnaNormalFilename != None or i_dnaNormalPileupsFilename != None):
+                if (i_dnaNormalFilename != None):
                     dnaNormalOutputString = pad_output(dnaNormalOutputString, len(refList + altList))
                     vcfOutputList.append(dnaNormalOutputString)
-                if (i_rnaNormalFilename != None or i_rnaNormalPileupsFilename != None):
+                if (i_rnaNormalFilename != None):
                     rnaNormalOutputString = pad_output(rnaNormalOutputString, len(refList + altList))
                     vcfOutputList.append(rnaNormalOutputString)
-                if (i_dnaTumorFilename != None or i_dnaTumorPileupsFilename != None):
+                if (i_dnaTumorFilename != None):
                     dnaTumorOutputString = pad_output(dnaTumorOutputString, len(refList + altList))
                     vcfOutputList.append(dnaTumorOutputString)
-                if (i_rnaTumorFilename != None or i_rnaTumorPileupsFilename != None):
+                if (i_rnaTumorFilename != None):
                     rnaTumorOutputString = pad_output(rnaTumorOutputString, len(refList + altList))
                     vcfOutputList.append(rnaTumorOutputString)
                 
@@ -2025,15 +1971,15 @@ def main():
     stopTime = time.time()  
     
     summaryMessage = "Summary for Chrom " + i_chrom + " and Id " + i_id + ": "
-    if (i_dnaNormalFilename != None or i_dnaNormalPileupsFilename != None):
+    if (i_dnaNormalFilename != None):
         #summaryMessage += "Total GERMs=" + str(totalGerms-totalLohs) + ", "
         summaryMessage += "Total GERMs=" + str(totalGerms) + ", "
-    if (i_rnaNormalFilename != None or i_rnaNormalPileupsFilename != None):
+    if (i_rnaNormalFilename != None):
         summaryMessage += "Total Normal EDITs=" + str(totalNormEdits) + ", "
-    if (i_dnaTumorFilename != None or i_dnaTumorPileupsFilename != None):
+    if (i_dnaTumorFilename != None):
         summaryMessage += "Total SOMs=" + str(totalSoms) + ", "
         #summaryMessage += "Total LOHs=" + str(totalLohs) + ", "
-    if (i_rnaTumorFilename != None or i_rnaTumorPileupsFilename != None):
+    if (i_rnaTumorFilename != None):
         summaryMessage += "Total Tumor EDITs=" + str(totalTumEdits) + ", "
     #summaryMessage += "Total coordinates with both DNA and RNA=" + str(countRnaDnaCoordinateOverlap) + ", "
     
