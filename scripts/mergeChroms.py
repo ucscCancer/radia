@@ -220,7 +220,7 @@ Using the same inputDir and outputDir is allowed."""
     # get the VCF generator
     (headerDict, coordinateDict) = get_vcf_data(i_id, i_inputDir, i_debug)    
     if len(headerDict['info']) == 0:
-	print >> sys.stderr, "\nERROR: No VCF files matching %s_chr<N>.vcf or %s_chr<N>.vcf.gz were found\n" % (i_id, i_id)
+	print >> sys.stderr, "\nERROR: No VCF files matching %s_chr<N>.vcf or %s_chr<N>.vcf.gz were found in %s\n" % (i_id, i_id, i_inputDir)
 	sys.exit(1)
 
     # create output filename, clean if necessary
