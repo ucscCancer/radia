@@ -497,36 +497,35 @@ def extract_passing(anId, aChromId, anInputFilename, anOutputDir, aJobListFileHa
     return outputFilename
 
 
-def filter_runSnpEff(anId, aChromId, anInputFilename, aSnpEffDir, aSnpEffGenome, aSnpEffCanonical, anOutputDir, aJobListFileHandler, aGzipFlag, anIsDebug):
+def filter_runSnpEff(anId, aChromId, anInputFilename, aSnpEffConfig, aSnpEffDir, aSnpEffGenome, aSnpEffCanonical, anOutputDir, aJobListFileHandler, aGzipFlag, anIsDebug):
 
     snpEffJar = os.path.join(aSnpEffDir, "snpEff.jar")
-    snpEffConfig = os.path.join(aSnpEffDir, "snpEff.config")
     
     # the output from snpEff is not gzipped
     if (aGzipFlag):
         outputFilename = os.path.join(anOutputDir, anId + "_snpEff_chr" + aChromId + ".vcf.gz")
         if (aSnpEffCanonical):
-            command = "zcat " + anInputFilename + " | java -Xmx4g -jar " + snpEffJar + " eff -c " + snpEffConfig + " -canon -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " - | gzip > " + outputFilename
+            command = "zcat " + anInputFilename + " | java -Xmx4g -jar " + snpEffJar + " eff -c " + aSnpEffConfig + " -canon -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " - | gzip > " + outputFilename
         else:
-            command = "zcat " + anInputFilename + " | java -Xmx4g -jar " + snpEffJar + " eff -c " + snpEffConfig + " -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " - | gzip > " + outputFilename
+            command = "zcat " + anInputFilename + " | java -Xmx4g -jar " + snpEffJar + " eff -c " + aSnpEffConfig + " -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " - | gzip > " + outputFilename
     else:
         outputFilename = os.path.join(anOutputDir, anId + "_snpEff_chr" + aChromId + ".vcf")
         if (aSnpEffCanonical):
-            command = "java -Xmx4g -jar " + snpEffJar + " eff -c " + snpEffConfig + " -canon -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " " + anInputFilename + " > " + outputFilename
+            command = "java -Xmx4g -jar " + snpEffJar + " eff -c " + aSnpEffConfig + " -canon -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " " + anInputFilename + " > " + outputFilename
         else:
-            command = "java -Xmx4g -jar " + snpEffJar + " eff -c " + snpEffConfig + " -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " " + anInputFilename + " > " + outputFilename
+            command = "java -Xmx4g -jar " + snpEffJar + " eff -c " + aSnpEffConfig + " -cancer -no-downstream -no-upstream -no-intergenic -no-intron " + aSnpEffGenome + " " + anInputFilename + " > " + outputFilename
         
         
     if (anIsDebug):
         logging.debug("Input: %s", anInputFilename)
         logging.debug("SnpEff: %s", snpEffJar)
-        logging.debug("SnpEff: %s", snpEffConfig)
+        logging.debug("SnpEff: %s", aSnpEffConfig)
         logging.debug("SnpEff: %s", aSnpEffGenome)
         logging.debug("SnpEff: %s", aSnpEffCanonical)
         logging.debug("Output: %s", outputFilename)
         logging.debug("Filter: %s", command)
     
-    readFilenameList = [anInputFilename, snpEffJar, snpEffConfig]
+    readFilenameList = [anInputFilename, snpEffJar, aSnpEffConfig]
     writeFilenameList = [outputFilename]
     if (not radiaUtil.check_for_argv_errors(None, readFilenameList, writeFilenameList)):
         sys.exit(1)
@@ -853,6 +852,7 @@ def filter_readSupport(aPythonExecutable, anId, aChromId, anInputFilename, anOut
 
 def remove_tmpFiles(aRmTmpFilesList, aJobListFileHandler, anIsDebug):
     
+    return
     finalList = list()
     for tmpFile in aRmTmpFilesList:
         if (os.path.exists(tmpFile)):
@@ -889,6 +889,7 @@ def main():
     i_cmdLineParser.add_option("-r", "--retroGenesDir", dest="retroGenesDir", metavar="RETRO_DIR", help="the path to the retrogenes directory")
     i_cmdLineParser.add_option("-p", "--pseudoGenesDir", dest="pseudoGenesDir", metavar="PSEUDO_DIR", help="the path to the pseudogenes directory")
     i_cmdLineParser.add_option("-c", "--cosmicDir", dest="cosmicDir", metavar="COSMIC_DIR", help="the path to the cosmic directory")
+    i_cmdLineParser.add_option("-n", "--snpEffConfig", dest="snpEffConfig", metavar="SNP_EFF_CONFIG", help="SnpEff config file. If empty, expects a file named snpEff.config in snpEffDir")
     i_cmdLineParser.add_option("-s", "--snpEffDir", dest="snpEffDir", metavar="SNP_EFF_DIR", help="the path to the snpEff directory")
     i_cmdLineParser.add_option("-e", "--snpEffGenome", dest="snpEffGenome", default="GRCh37.69", metavar="SNP_EFF_GENOME", help="the snpEff Genome, %default by default")
     i_cmdLineParser.add_option("", "--canonical", action="store_true", default=False, dest="canonical", metavar="CANONICAL", help="include this argument if only the canonical transcripts from snpEff should be used, %default by default")
@@ -970,6 +971,7 @@ def main():
     i_shebang = None
     i_logFilename = None
     i_blatFastaFilename = None
+    i_snpEffConfig = None
     i_snpEffDir = None
     i_rnaGeneBlckFilename = None
     i_rnaGeneFamilyBlckFilename = None
@@ -1000,6 +1002,10 @@ def main():
     if (i_cmdLineOptions.snpEffDir != None):
         i_snpEffDir = str(i_cmdLineOptions.snpEffDir)
         dirList += [i_snpEffDir]
+        if (i_cmdLineOptions.snpEffConfig != None):
+            i_snpEffConfig = str(i_cmdLineOptions.snpEffConfig)
+        else:
+            i_snpEffConfig = os.path.join(i_snpEffDir, "snpEff.config")
     #if (i_cmdLineOptions.shebang != None):
     #    i_shebang = str(i_cmdLineOptions.shebang)
     if (i_cmdLineOptions.logFilename != None):
@@ -1060,6 +1066,7 @@ def main():
         logging.debug("blacklistDir %s", i_blacklistDir)
         logging.debug("targetDir %s", i_targetDir)
         logging.debug("dbSnpDir %s", i_dbSnpDir)
+        logging.debug("snpEffConfig %s", i_snpEffConfig)
         logging.debug("snpEffDir %s", i_snpEffDir)
         logging.debug("snpEffGenome %s", i_snpEffGenome)
         logging.debug("snpEffCanonical %s", i_snpEffCanonical)
@@ -1243,6 +1250,7 @@ def main():
             previousFilename = merge_rnaAndDna(i_pythonExecutable, i_id, i_chr, dnaFilename, overlapFilename, previousFilename, True, i_outputDir, i_scriptsDir, i_joblistFileHandler, i_gzip, i_debug)
             rmTmpFilesList.append(previousFilename)
         else:
+
             # merge RNA and DNA
             # the dnaFilename and --dnaHeaderOnly=False means that we merge the header and the results in the dnaFilename
             previousFilename = merge_rnaAndDna(i_pythonExecutable, i_id, i_chr, dnaFilename, overlapFilename, previousFilename, False, i_outputDir, i_scriptsDir, i_joblistFileHandler, i_gzip, i_debug)
@@ -1256,7 +1264,7 @@ def main():
         previousFilename = extract_passing(i_id, i_chr, previousFilename, i_outputDir, i_joblistFileHandler, i_gzip, i_debug)
         rmTmpFilesList.append(previousFilename)
       
-        previousFilename = filter_runSnpEff(i_id, i_chr, previousFilename, i_snpEffDir, i_snpEffGenome, i_snpEffCanonical, i_outputDir, i_joblistFileHandler, i_gzip, i_debug)
+        previousFilename = filter_runSnpEff(i_id, i_chr, previousFilename, i_snpEffConfig, i_snpEffDir, i_snpEffGenome, i_snpEffCanonical, i_outputDir, i_joblistFileHandler, i_gzip, i_debug)
         rmTmpFilesList.append(previousFilename)
     
         if (not i_dnaOnlyFlag and i_rnaBlacklistFlag):
