@@ -207,7 +207,6 @@ def softclip(alignedread):
 
 
 def ismut(pileupread, chrom, pos, fastafile, alt):
-    #wait, what happens at insertions or deletions?
     if pileupread.indel != 0:
         return True
     if pileupread.alignment.seq[pileupread.query_position] == fastafile.fetch(chrom, pos, pos+1):
@@ -378,6 +377,8 @@ class Club():
             if pileupcolumn.pos != pos:
                 continue
             for pileupread in pileupcolumn.pileups:
+                if pileupread.is_del or pileupread.is_refskip:  # query position is None if is_del or is_refskip is set
+                    continue
                 alignedread = pileupread.alignment
                 if ismut(pileupread, chrom, pos, fasta, alt) and checkread(pileupread):
                     #are orphans secondary?
