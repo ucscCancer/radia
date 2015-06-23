@@ -579,7 +579,7 @@ def filter_createBlatInput(aPythonExecutable, anId, aChromId, anInputFilename, a
 
 def filter_runBlat(anId, aChromId, aBlatInputFilename, aFastaFile, anOutputDir, aJobListFileHandler, anIsDebug):
 
-    blatOutputFilename = anOutputDir + anId + "_blatOutput_chr" + aChromId + ".blast"    
+    blatOutputFilename = os.path.join(anOutputDir, anId + "_blatOutput_chr" + aChromId + ".blast")    
     #command = "blat -stepSize=5 -repMatch=2253 -minScore=0 -minIdentity=0 -t=dna -q=rna " + aFastaFile + " " + aBlatInputFilename + " -out=blast8 " + blatOutputFilename
     command = "blat -stepSize=5 -repMatch=2253 -t=dna -q=rna " + aFastaFile + " " + aBlatInputFilename + " -out=blast8 " + blatOutputFilename
 
