@@ -92,20 +92,25 @@ def filter_blacklist(aPythonExecutable, anId, aChromId, anInputFilename, anOutpu
 
 
 def flag_dbSnp(aPythonExecutable, anId, aChromId, anInputFilename, anOutputDir, aDbSnpDir, aScriptsDir, aJobListFileHandler, aGzipFlag, anIsDebug):
-    
     filterFilename = os.path.join(aDbSnpDir, "chr" + aChromId + ".bed.gz")
     if (not os.path.isfile(filterFilename)):
-        filterFilename = os.path.join(aDbSnpDir, "chr" + aChromId + ".bed")
-        
+        filterFilename = os.path.join(aDbSnpDir, "chr" + aChromId + ".vcf.gz")
+        if (not os.path.isfile(filterFilename)):
+            filterFilename = os.path.join(aDbSnpDir, "chr" + aChromId + ".vcf")
+            if (not os.path.isfile(filterFilename)):
+                filterFilename = os.path.join(aDbSnpDir, "chr" + aChromId + ".bed")
+                if (not os.path.isfile(filterFilename)):
+                    logging.error("ERROR: Cannot find SNP vcf or bed file in %s", aDbSnpDir)
+                    sys.exit(1)
     if (aGzipFlag):
         outputFilename = os.path.join(anOutputDir, anId + "_dbsnp_chr" + aChromId + ".vcf.gz")
     else:
         outputFilename = os.path.join(anOutputDir, anId + "_dbsnp_chr" + aChromId + ".vcf")
     
-    script = os.path.join(aScriptsDir, "filterByCoordinate.py")
+    script = os.path.join(aScriptsDir, "filterBySnp.py")
+    #script = os.path.join(aScriptsDir, "filterByCoordinate.py")
     
     command = aPythonExecutable + " " + script + " " + anId + " " + aChromId + " " + filterFilename + " " + anInputFilename + " DB --includeOverlaps --includeFilterName --includeIdName -d INFO -f \"##INFO=<ID=DB,Number=0,Type=Flag,Description=\\\"dbSNP common SNP membership\\\">\" -o " + outputFilename
-    
     if (anIsDebug):
         logging.debug("Script: %s", script)
         logging.debug("FilterFilename: %s", filterFilename)
@@ -1169,7 +1174,7 @@ def main():
         previousFilename = filter_mpileupSupport_dna(i_pythonExecutable, i_id, i_chr, previousFilename, None, True, i_outputDir, i_scriptsDir, i_joblistFileHandler, i_gzip, i_debug)
         rmTmpFilesList.append(previousFilename)
         
-    else:        
+    else:       # if not dnaonly 
         # filter by blacklist
         if (i_blacklistFlag):    
             previousFilename = filter_blacklist(i_pythonExecutable, i_id, i_chr, previousFilename, i_outputDir, i_blacklistDir, i_scriptsDir, i_joblistFileHandler, i_gzip, i_debug)
