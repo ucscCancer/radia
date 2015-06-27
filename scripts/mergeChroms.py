@@ -72,7 +72,7 @@ def get_vcf_data(anId, anInputDir, anIsDebug):
     
     # for each vcf file
     # they might be gzipped, they might not
-    for vcfFile in (glob.glob(anInputDir + anId + "_chr*.vcf*")):
+    for vcfFile in (glob.glob(anInputDir + '/' + anId + "_chr*.vcf*")):
         # open the file
         vcfFileHandler = get_read_fileHandler(vcfFile)
         
