@@ -857,7 +857,6 @@ def filter_readSupport(aPythonExecutable, anId, aChromId, anInputFilename, anOut
 
 def remove_tmpFiles(aRmTmpFilesList, aJobListFileHandler, anIsDebug):
     
-    return
     finalList = list()
     for tmpFile in aRmTmpFilesList:
         if (os.path.exists(tmpFile)):
